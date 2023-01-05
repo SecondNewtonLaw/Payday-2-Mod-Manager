@@ -38,7 +38,7 @@ public partial class ModManagement
                 useOldHookingDll ? await Shared.HttpClient.GetAsync(SUPERBLT_DLL_DOWNLOAD_IPHLPAPI) // Gets the IPHLPAPI.dll SuperBLT variant if requested in the method parameters.
                                 : await Shared.HttpClient.GetAsync(SUPERBLT_DLL_DOWNLOAD_WSOCK32);
 
-                AnsiConsole.MarkupLine($"(SuperBLT dll) [yellow]Downloading SuperBLT Dll[/], [red]{dllVariant}[/] variant. ({dllDownload.Content.Headers.ContentLength} bytes)");
+                AnsiConsole.MarkupLine($"(SuperBLT dll) [yellow]Downloading the SuperBLT Dll[/], [red]{dllVariant}[/] variant. ({dllDownload.Content.Headers.ContentLength} bytes)");
 
                 Stream dllStream = await dllDownload.Content.ReadAsStreamAsync();
                 FileStream handle = File.Open(tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
@@ -47,7 +47,7 @@ public partial class ModManagement
                 await handle.FlushAsync();
                 await handle.DisposeAsync();
 
-                AnsiConsole.MarkupLine("(SuperBLT dll) [yellow]Installing SuperBLT.[/]");
+                AnsiConsole.MarkupLine("(SuperBLT dll) [yellow]Installing SuperBLT...[/]");
                 // The DLL download is actually a Zip file, extract its contents into the game folder.
                 ZipFile.ExtractToDirectory(tempFile, Shared.ApplicationConfiguration.installPath);
                 AnsiConsole.MarkupLine("(SuperBLT dll) [green]SuperBLT installed![/]");
@@ -78,11 +78,11 @@ public partial class ModManagement
                 Directory.CreateDirectory(modsDirectory);
 
                 baseModFiles = await Shared.HttpClient.GetAsync(SUPERBLT_BASEMOD_FILES);
-                AnsiConsole.MarkupLine($"(Mod Files) [yellow]Downloading SuperBLT BaseMod files[/]. ({baseModFiles.Content.Headers.ContentLength} bytes)");
+                AnsiConsole.MarkupLine($"(Mod Files) [yellow]Downloading SuperBLT Base Mod files[/]... ({baseModFiles.Content.Headers.ContentLength} bytes)");
 
                 Stream baseFilesStream = await baseModFiles.Content.ReadAsStreamAsync();
 
-                AnsiConsole.MarkupLine("(Mod Files) [yellow]Installing SuperBLT Base Mod files.[/]");
+                AnsiConsole.MarkupLine("(Mod Files) [yellow]Installing SuperBLT Base Mod files...[/]");
 
                 FileStream handle = File.Open(tempFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
