@@ -1,4 +1,5 @@
 ﻿using System;
+using Masked.Sys.Extensions;
 using Spectre.Console;
 
 namespace ModManager;
@@ -7,13 +8,14 @@ public static class MainActivity
 {
     public static async Task Main()
     {
+        Configuration.LoadConfigurations(); // Load all configurations.
+
         const string PROGRAM_TITLE = "    PayDay 2 Mod Manager    ";
         string titleBorder = new('-', PROGRAM_TITLE.Length);
         AnsiConsole.MarkupLine($"\t|{titleBorder}|");
         AnsiConsole.MarkupLine($"\t|{PROGRAM_TITLE}|");
         AnsiConsole.MarkupLine($"\t|{titleBorder}|");
 
-        Configuration.LoadConfigurations(); // Load all configurations.
         string paydayStatusString;
         try
         {
@@ -41,8 +43,9 @@ public static class MainActivity
         }
         AnsiConsole.MarkupLine($"\tPayday 2 Status: [yellow]{paydayStatusString}[/]");
         AnsiConsole.MarkupLine("\t1. [green bold]Install[/] SuperBLT");
-        AnsiConsole.MarkupLine("\t2. [yellow]Modify[/] Settings");
-        AnsiConsole.MarkupLine("\t3. [red]Exit[/]");
+        AnsiConsole.MarkupLine("\t2. [green bold]Install[/] Mods");
+        AnsiConsole.MarkupLine("\t3. [yellow]Modify[/] Settings");
+        AnsiConsole.MarkupLine("\t4. [red]Exit[/]");
 
         int choice = AnsiConsole.Prompt(new TextPrompt<int>($"Select an option [red]@[underline]{Environment.UserName}[/][/]")
         {
@@ -51,7 +54,7 @@ public static class MainActivity
             ValidationErrorMessage = "That is not a valid choice.",
             ShowChoices = false,
             AllowEmpty = false,
-        }.AddChoices(new int[] { 1, 2, 3 }));
+        }.AddChoices(new int[] { 1, 2, 3, 4 }));
 
         switch (choice)
         {
@@ -66,11 +69,31 @@ public static class MainActivity
                     AnsiConsole.MarkupLine("SuperBLT Installation failed!");
                 }
                 break;
-
             case 2:
+                string uris = AnsiConsole.Ask<string>("Please enter the URLs of the mods you want to download (You can enter more than one, they must be separated with the character ';')");
+
+                if (uris.Contains(';'))
+                {
+                    string[] urisAsString = uris.Split(';');
+                    Uri[] uriArr = new Uri[urisAsString.Length];
+                    urisAsString.FastIterator((uri, index) =>
+                    {
+                        uriArr[index] = new Uri(uri);
+                        return NextStep.Continue;
+                    });
+                    await ModManagement.InstallModsAsync(uriArr);
+                }
+                else
+                {
+                    await ModManagement.InstallModAsync(new Uri(uris));
+                }
+
                 break;
 
             case 3:
+                break;
+
+            case 4:
                 Environment.Exit(0);
                 break;
 
