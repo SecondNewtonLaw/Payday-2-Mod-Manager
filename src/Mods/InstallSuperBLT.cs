@@ -71,6 +71,9 @@ public partial class ModManagement
             try
             {
                 string modsDirectory = Path.Combine(Shared.ApplicationConfiguration.installPath, "mods");
+                Directory.CreateDirectory(Path.Combine(modsDirectory, "downloads"));
+                Directory.CreateDirectory(Path.Combine(modsDirectory, "logs"));
+                Directory.CreateDirectory(Path.Combine(modsDirectory, "saves"));
                 AnsiConsole.MarkupLine("(Mod Files) Creating folders...");
                 Directory.CreateDirectory(modsDirectory);
 
